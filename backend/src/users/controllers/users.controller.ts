@@ -14,7 +14,7 @@ export class UsersController {
   @Get()
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
-  async findAll(): Promise<User[]> {
+  async findAll(){
     return this.usersService.findAll();
   }
 

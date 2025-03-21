@@ -8,14 +8,14 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
-    UsersModule,
     AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //   .apply(AuthMiddleware)
-  //   .forRoutes({ path: '', method: RequestMethod.ALL });
-  // }
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+    .apply(AuthMiddleware)
+    .forRoutes({ path: '/users', method: RequestMethod.ALL });
+  }
 }

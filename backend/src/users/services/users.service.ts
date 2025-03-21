@@ -7,8 +7,22 @@ import { User } from '../entities/users.entity';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.findAll();
+  async findAll(): Promise<{ success: boolean; message: string; users?: User[] | null }> {
+    try{
+      const users = await this.usersRepository.findAll();
+      return {
+        success: true,
+        message: 'All users are retrieved successfully',
+        users: users
+      }
+    }catch(error){
+      console.error('Error in fetching all the users: ', error.message);
+      return {
+        success: false,
+        message: 'Internal Server Error'
+      }
+    }
+    
   }
 
   async findOne(id: number): Promise<User> {

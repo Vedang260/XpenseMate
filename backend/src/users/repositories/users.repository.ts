@@ -31,7 +31,12 @@ export class UsersRepository{
 
     // get all users
     async findAll(): Promise<User[]> {
-      return this.userRepository.find();
+      try{
+        return this.userRepository.find();
+      }
+      catch(error){
+        throw error;
+      }
     }
     
     // finds a particular User based on user_id
