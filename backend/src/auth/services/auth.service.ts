@@ -7,6 +7,7 @@ export class AuthService{
         try{
             // hashing the user password
             registerDto.password = await bcrypt.hash(registerDto.password, 10);
+            
             return {
                 success: true,
                 message: 'User registered successfully'
