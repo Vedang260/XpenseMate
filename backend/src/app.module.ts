@@ -1,25 +1,21 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/modules/users.module';
 import { AuthModule } from './auth/modules/auth.module';
-import databaseConfig from './config/database.config';
+import { typeOrmConfig } from './config/database.config';
+import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [databaseConfig],
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.get('database'),
-      }),
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     UsersModule,
     AuthModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //   .apply(AuthMiddleware)
+  //   .forRoutes({ path: '', method: RequestMethod.ALL });
+  // }
+}

@@ -12,35 +12,30 @@ export class UsersRepository{
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async findByEmail(email: string): Promise<User | null> {
-        return this.userRepository.findOne({ where: { email } });
+    // finds the user by email
+    async findUserByEmail(email: string): Promise<User | null> {
+      return this.userRepository.findOne({ where: { email } });
     }
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
-        const { password, ...rest } = createUserDto;
-        
-        // Hash the password
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
-        
-        const user = this.userRepository.create({
-          ...rest,
-          password: hashedPassword,
-        });
-        
-        return this.userRepository.save(user);
+    // creates new user 
+    async createUser(createUserDto: CreateUserDto): Promise<User> {
+      const user = this.userRepository.create(createUserDto);
+      return this.userRepository.save(user);
     }
 
-    async remove(id: number): Promise<boolean> {
+    // deletes a user
+    async removeUser(id: number): Promise<boolean> {
         const result = await this.userRepository.delete(id);
         return result.affected ? result.affected > 0 : false;
     }
 
+    // get all users
     async findAll(): Promise<User[]> {
-        return this.userRepository.find();
-      }
+      return this.userRepository.find();
+    }
     
-      async findOne(id: number): Promise<User | null> {
-        return this.userRepository.findOne({ where: { id } });
-      }
+    // finds a particular User based on user_id
+    async findOne(id: number): Promise<User | null> {
+      return this.userRepository.findOne({ where: { id } });
+    }
 }

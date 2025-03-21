@@ -22,15 +22,15 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findByEmail(email);
+    return this.usersRepository.findUserByEmail(email);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return this.usersRepository.create(createUserDto);
+    return this.usersRepository.createUser(createUserDto);
   }
 
   async removeUser(id: number): Promise<void> {
-    const result = await this.usersRepository.remove(id);
+    const result = await this.usersRepository.removeUser(id);
     
     if (!result) {
       throw new NotFoundException(`User with ID "${id}" not found`);

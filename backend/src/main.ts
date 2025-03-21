@@ -9,11 +9,8 @@ async function bootstrap() {
     whitelist: true,
     transform: true,
   }));
-  app.enableCors({
-    origin: 'http://localhost:5173', // Frontend default port
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  });
+  app.enableCors();
   await app.listen(process.env.PORT ?? 8000);
+  console.log('🚀Server is running on port: 8000')
 }
 bootstrap();
