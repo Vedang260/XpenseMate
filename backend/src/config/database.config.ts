@@ -1,17 +1,12 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import * as dotenv from 'dotenv';
+import { registerAs } from '@nestjs/config';
 
-dotenv.config();
-
-// setting up database config using typeorm
-export const typeOrmConfig: TypeOrmModuleOptions = {
-    type: 'postgres',
-    host: process.env.DATABASE_HOST,
-    port: Number(process.env.DATABASE_PORT),
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
-    autoLoadEntities: true,
-    synchronize: true,
-    logging: true
-}
+export default registerAs('database', () => ({
+  type: 'postgres',
+  host: process.env.DATABASE_HOST ,
+  port: Number(process.env.DATABASE_PORT),
+  username: process.env.DATABASE_USERNAME ,
+  password: process.env.DATABASE_PASSWORD ,
+  database: process.env.DATABASE_NAME ,
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  synchronize: process.env.NODE_ENV !== 'production',
+})); 
