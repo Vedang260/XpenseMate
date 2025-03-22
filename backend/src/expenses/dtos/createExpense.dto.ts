@@ -5,10 +5,6 @@ import { PaymentMethod } from "src/common/enums/paymentMethod.enum";
 export class CreateExpenseDto{
 
     @IsNotEmpty()
-    @IsNumber()
-    user_id: number;
-
-    @IsNotEmpty()
     @IsString()
     @MaxLength(100)
     title: string;

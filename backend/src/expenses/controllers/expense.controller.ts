@@ -4,6 +4,7 @@ import { Request } from "express";
 import { JwtAuthGuard } from "src/auth/guards/jwt_auth.guard";
 import { Expense } from "../entities/expense.entity";
 import { CreateExpenseDto } from "../dtos/createExpense.dto";
+import { UpdateExpenseDto } from "../dtos/updateExpense.dto";
 
 
 @Controller('expenses')
@@ -14,8 +15,17 @@ export class ExpenseController{
     // Create Expense
     @Post()
     async createExpense(@Body() createExpenseDto: CreateExpenseDto, @Req() req: Request){
-        createExpenseDto['user_id'] = { user_id: req['user'].id }; 
-        return this.expenseService.createExpense(createExpenseDto);
+        return this.expenseService.createExpense(createExpenseDto, req['user'].id);
+    }
+
+    // Update Expense
+    @Put(':id')
+    async updateExpense(@Param('id') id: number, @Body() updateExpenseDto: UpdateExpenseDto){
+        return this.expenseService.updateExpense(updateExpenseDto, id);
     }
     
+    @Delete(':id')
+    async deleteExpense(@Param('id') id: number){
+        return this.expenseService.deleteExpense(id);
+    }
 }
