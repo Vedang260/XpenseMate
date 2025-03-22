@@ -29,10 +29,10 @@ export class ExpenseRepository{
             throw new InternalServerErrorException('Error in retrieving Expenses');   
         }
     }
-    async createExpense(expenseData: Partial<Expense>, userId: number): Promise<Expense> {
+    async createExpense(expenseData: Partial<Expense>, user_id: number): Promise<Expense> {
         try{
-            const expense = this.expenseRepository.create({...expenseData, user_id: userId});
-            return await this.expenseRepository.save(expense);
+            const expense = this.expenseRepository.create(expenseData);
+            return await this.expenseRepository.save({...expense, user_id });
         }catch(error){
             console.error('Error in creating a new Expense: ', error.message);
             throw new InternalServerErrorException('Error in creating Expense');

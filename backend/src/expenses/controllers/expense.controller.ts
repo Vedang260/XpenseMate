@@ -9,7 +9,6 @@ import { RolesGuard } from "src/auth/guards/roles.guard";
 import { UserRole } from "src/common/enums/roles.enum";
 import { Roles } from "src/common/decorators/roles.decorator";
 
-
 @Controller('expenses')
 @UseGuards(JwtAuthGuard)
 export class ExpenseController{
@@ -20,7 +19,7 @@ export class ExpenseController{
     @UseGuards(RolesGuard)
     @Roles(UserRole.USER)
     async createExpense(@Body() createExpenseDto: CreateExpenseDto, @Req() req: Request){
-        return this.expenseService.createExpense(createExpenseDto, req['user'].id);
+        return this.expenseService.createExpense(createExpenseDto, req['user'].userId);
     }
 
     // Update Expense
@@ -31,7 +30,7 @@ export class ExpenseController{
         return this.expenseService.updateExpense(updateExpenseDto, id);
     }
     
-    // Delete Expense
+    // Delete
     @Delete(':id')
     @UseGuards(RolesGuard)
     @Roles(UserRole.USER)
