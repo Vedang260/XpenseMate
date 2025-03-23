@@ -17,7 +17,8 @@ api.interceptors.request.use((config) => {
 });
 
 export const addExpense = async (expense: NewExpense) => api.post("/expenses", expense);
-export const updateExpense = async (expense: NewExpense, id: number) => api.put(`/expenses/${id}`, expense);
+export const updateExpense = async (expense: Expense, id: number) => api.put(`/expenses/${id}`, expense);
 export const deleteExpense = async (id: number) => api.delete(`/expenses/${id}`);
+export const fetchExpenses = async () => api.get('/expenses');
 
 export default api;

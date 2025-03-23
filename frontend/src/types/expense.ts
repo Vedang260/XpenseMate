@@ -1,4 +1,5 @@
 export interface BaseExpense {
+    title: string;
     amount: number;
     date: string;
     category: string;

@@ -20,10 +20,15 @@ import { toastSuccess, toastError } from "../utils/toast";
 // Categories with Emojis
 const categories = [
   { name: "Food", emoji: "🍕" },
-  { name: "Transport", emoji: "🚕" },
+  { name: "Travel", emoji: "✈️" },
   { name: "Entertainment", emoji: "🎬" },
-  { name: "Bills", emoji: "💡" },
-  { name: "Other", emoji: "📌" },
+  { name: "Shopping", emoji: "🛍️" },
+  { name: "Rent", emoji: "🏠" },
+  { name: "Grocery", emoji: "🫛" },
+  { name: "Medical", emoji: "💊" },
+  { name: "Fuel", emoji: "⛽" },
+  { name: "Personal Care", emoji: "😄" },
+  { name: "Others", emoji: "📦" },
 ];
 
 // Payment Methods
@@ -54,8 +59,10 @@ const AddExpense: React.FC = () => {
       const response = await addExpense(newExpense);
       if(response.data.success){
         dispatch(setExpenses([...expenses, response.data.expense]));
-        toastSuccess("Expense added successfully!");
+        toastSuccess(response.data.message);
         navigate("/expenses");
+      }else{
+        toastError(response.data.message);
       }
     } catch (error) {
       toastError("Failed to add expense.");
@@ -87,6 +94,14 @@ const AddExpense: React.FC = () => {
         Keep track of your expenses efficiently.
       </Typography>
       <form onSubmit={handleSubmit}>
+        <TextField
+            label="Title"
+            fullWidth
+            margin="normal"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+        />
         <TextField
           label="Amount"
           type="number"

@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Navbar from "./components/navbar";
+import AddExpense from "./pages/AddExpense";
+import ExpenseList from "./pages/ExpenseList";
 
 const App: React.FC = () => {
   return (
@@ -18,8 +20,8 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* <Route path="/add-expense" element={<AddExpense />} />
-          <Route path="/expenses" element={<ExpenseList />} /> */}
+          <Route path="/add-expense" element={<AddExpense />} />
+          <Route path="/expenses" element={<ExpenseList />} />
         </Routes>
       </Router>
     </ThemeProvider>
