@@ -58,4 +58,45 @@ export class ExpenseRepository{
             throw new InternalServerErrorException('Error in deleting expense');
         }
     }
+
+    async getTotalExpenseForPeriod(userId: number, startDate: string, endDate: string): Promise<number> {
+        const result = await this.expenseRepository.createQueryBuilder('expenses')
+          .select('SUM(expense.amount)', 'total')
+          .where('expense.user_id = :userId', { userId })
+          .andWhere('expense.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+          .getRawOne();
+          
+        return result?.total || 0;
+      }
+    
+      async getCategoryWiseTotal(userId: number): Promise<{ category: string; total: number }[]> {
+        return this.expenseRepository.createQueryBuilder('expenses')
+          .select('expense.category', 'category')
+          .addSelect('SUM(expense.amount)', 'total')
+          .where('expense.user_id = :userId', { userId })
+          .groupBy('expense.category')
+          .getRawMany();
+      }
+    
+      async getWeeklyExpenses(userId: number): Promise<{ day: string; amount: number }[]> {
+        return this.expenseRepository.createQueryBuilder('expenses')
+          .select(`TO_CHAR(expense.date, 'Dy') AS day`)
+          .addSelect('SUM(expense.amount)', 'amount')
+          .where('expense.user_id = :userId', { userId })
+          .andWhere('expense.date >= CURRENT_DATE - INTERVAL \'6 days\'')
+          .groupBy('day')
+          .orderBy('MIN(expense.date)', 'ASC')
+          .getRawMany();
+      }
+    
+      async getYearlyExpenses(userId: number): Promise<{ month: string; amount: number }[]> {
+        return this.expenseRepository.createQueryBuilder('expenses')
+          .select(`TO_CHAR(expense.date, 'Mon') AS month`)
+          .addSelect('SUM(expense.amount)', 'amount')
+          .where('expense.user_id = :userId', { userId })
+          .andWhere('EXTRACT(YEAR FROM expense.date) = EXTRACT(YEAR FROM CURRENT_DATE)')
+          .groupBy('month')
+          .orderBy('MIN(expense.date)', 'ASC')
+          .getRawMany();
+    }
 }
