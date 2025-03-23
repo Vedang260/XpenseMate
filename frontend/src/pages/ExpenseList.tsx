@@ -169,7 +169,7 @@ const ExpenseList: React.FC = () => {
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>{expense.date}</TableCell>
                   <TableCell>{categories.find(cat => cat.name === expense.category)?.emoji} {expense.category}</TableCell>
-                  <TableCell>${expense.amount}</TableCell>
+                  <TableCell>₹{expense.amount}</TableCell>
                   <TableCell>{paymentMethods.find(pm => pm.name === expense.paymentMethod)?.emoji} {expense.paymentMethod}</TableCell>
                   <TableCell>
                     <IconButton color="primary" onClick={() => setEditExpense(expense)}>

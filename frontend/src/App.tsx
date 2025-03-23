@@ -4,7 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./styles/theme";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./components/Dashboard";
 import Home from "./pages/Home";
 import Navbar from "./components/navbar";
 import AddExpense from "./pages/AddExpense";
