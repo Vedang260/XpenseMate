@@ -1,4 +1,3 @@
-// src/components/ExpenseList.tsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,7 +16,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TableContainer,
+  Paper,
+  TablePagination,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { fetchExpenses, updateExpense as updateExpenseAPI, deleteExpense as deleteExpenseAPI } from "../services/expense/api";
 import { setExpenses, setLoading, updateExpense, deleteExpense as deleteExpenseAction } from "../redux/slices/expenseSlice";
 import { RootState } from "../redux/store/store";
@@ -25,17 +30,23 @@ import { Expense } from "../types/expense";
 import { toastError, toastSuccess } from "../utils/toast";
 
 const categories = [
-    { name: "Food", emoji: "🍕" },
-    { name: "Travel", emoji: "✈️" },
-    { name: "Entertainment", emoji: "🎬" },
-    { name: "Shopping", emoji: "🛍️" },
-    { name: "Rent", emoji: "🏠" },
-    { name: "Grocery", emoji: "🫛" },
-    { name: "Medical", emoji: "💊" },
-    { name: "Fuel", emoji: "⛽" },
-    { name: "Personal Care", emoji: "😄" },
-    { name: "Others", emoji: "📦" },
-  ];
+  { name: "Food", emoji: "🍕" },
+  { name: "Travel", emoji: "✈️" },
+  { name: "Entertainment", emoji: "🎬" },
+  { name: "Shopping", emoji: "🛍️" },
+  { name: "Rent", emoji: "🏠" },
+  { name: "Grocery", emoji: "🫛" },
+  { name: "Medical", emoji: "💊" },
+  { name: "Fuel", emoji: "⛽" },
+  { name: "Personal Care", emoji: "😄" },
+  { name: "Others", emoji: "📦" },
+];
+
+const paymentMethods = [
+  { name: "Cash", emoji: "💵" },
+  { name: "Card", emoji: "💳" },
+  { name: "Online", emoji: "📱" },
+];
 
 const ExpenseList: React.FC = () => {
   const dispatch = useDispatch();
@@ -43,21 +54,22 @@ const ExpenseList: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<string>("All");
   const [filterDate, setFilterDate] = useState<string>("");
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const loadExpenses = async () => {
       dispatch(setLoading(true));
       try {
-        const response = await fetchExpenses(); // Uses api.get('/expenses') with token
-        if(response.data.success){
-            dispatch(setExpenses(response.data.expenses));
-            toastSuccess(response.data.message);
-        }else{
-            toastError(response.data.message);
+        const response = await fetchExpenses();
+        if (response.data.success) {
+          dispatch(setExpenses(response.data.expenses));
+          toastSuccess(response.data.message);
+        } else {
+          toastError(response.data.message);
         }
       } catch (error) {
-        console.error("Failed to fetch expenses", error);
-        toastError('Failed to fetch the expenses');
+        toastError("Failed to fetch expenses.");
       } finally {
         dispatch(setLoading(false));
       }
@@ -68,16 +80,15 @@ const ExpenseList: React.FC = () => {
   const handleDelete = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      const response = await deleteExpenseAPI(id); // Uses api.delete('/expenses/:id') with token
-      if(response.data.success){
+      const response = await deleteExpenseAPI(id);
+      if (response.data.success) {
         dispatch(deleteExpenseAction(id));
         toastSuccess(response.data.message);
-      }else{
+      } else {
         toastError(response.data.message);
       }
     } catch (error) {
-      console.error("Failed to delete expense", error);
-      toastError('Failed to delete the expense');
+      toastError("Failed to delete expense.");
     } finally {
       dispatch(setLoading(false));
     }
@@ -87,39 +98,33 @@ const ExpenseList: React.FC = () => {
     if (!editExpense) return;
     dispatch(setLoading(true));
     try {
-      const response = await updateExpenseAPI({
-        id: editExpense.id,
-        title: editExpense.title,
-        amount: editExpense.amount,
-        category: editExpense.category,
-        date: editExpense.date,
-        description: editExpense.description,
-        paymentMethod: editExpense.paymentMethod
-      }, editExpense.id ); // Uses api.put('/expenses/:id') with token
-      if(response.data.success){
+      const response = await updateExpenseAPI(editExpense, editExpense.id);
+      if (response.data.success) {
         dispatch(updateExpense(response.data));
         setEditExpense(null);
         toastSuccess(response.data.message);
-      }else{
+      } else {
         toastError(response.data.message);
       }
     } catch (error) {
-      console.error("Failed to update expense", error);
-      toastError('Failed to update the Expense');
+      toastError("Failed to update the expense.");
     } finally {
       dispatch(setLoading(false));
     }
   };
 
   const filteredExpenses = expenses.filter((expense: Expense) => {
-    const matchesCategory = filterCategory === "All" || expense.category === filterCategory;
-    const matchesDate = !filterDate || expense.date.startsWith(filterDate);
-    return matchesCategory && matchesDate;
+    return (
+      (filterCategory === "All" || expense.category === filterCategory) &&
+      (!filterDate || expense.date.startsWith(filterDate))
+    );
   });
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>Your Expenses</Typography>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>💰 Your Expenses</Typography>
+      
+      {/* Filters */}
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <TextField
           select
@@ -128,6 +133,7 @@ const ExpenseList: React.FC = () => {
           onChange={(e) => setFilterCategory(e.target.value)}
           sx={{ minWidth: 200 }}
         >
+          <MenuItem value="All">🌍 All</MenuItem>
           {categories.map((cat) => (
             <MenuItem key={cat.name} value={cat.name}>{`${cat.emoji} ${cat.name}`}</MenuItem>
           ))}
@@ -140,70 +146,106 @@ const ExpenseList: React.FC = () => {
           InputLabelProps={{ shrink: true }}
         />
       </Box>
+
       {loading ? (
         <CircularProgress />
       ) : (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredExpenses.length > 0 ? (
-              filteredExpenses.map((expense: Expense) => (
-                <TableRow key={expense.id}>
+        <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: 3 }}>
+          <Table>
+            <TableHead sx={{ bgcolor: "#32612D" }}>
+              <TableRow>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Title</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Date</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Category</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Amount</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Payment Method</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredExpenses.length > 0 ? 
+              (filteredExpenses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((expense) => (
+                <TableRow key={expense.id} sx={{ fontSize: 18, bgcolor: "#f9f9f9", "&:nth-of-type(even)": { bgcolor: "e3f2fd" } }}>
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>{expense.date}</TableCell>
-                  <TableCell>{expense.category}</TableCell>
-                  <TableCell>{expense.amount}</TableCell>
-                  <TableCell>{expense.description || "-"}</TableCell>
+                  <TableCell>{categories.find(cat => cat.name === expense.category)?.emoji} {expense.category}</TableCell>
+                  <TableCell>${expense.amount}</TableCell>
+                  <TableCell>{paymentMethods.find(pm => pm.name === expense.paymentMethod)?.emoji} {expense.paymentMethod}</TableCell>
                   <TableCell>
-                    <Button onClick={() => setEditExpense(expense)}>Edit</Button>
-                    <Button onClick={() => handleDelete(expense.id)}></Button>
+                    <IconButton color="primary" onClick={() => setEditExpense(expense)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => handleDelete(expense.id)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow><TableCell colSpan={5} align="center">No expenses found.</TableCell></TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))): (
+                <TableRow><TableCell colSpan={5} align="center">No expenses found.</TableCell></TableRow>
+              )}
+            </TableBody>
+          </Table>
+          
+          {/* Pagination */}
+          <TablePagination
+            component="div"
+            count={filteredExpenses.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
+          />
+        </TableContainer>
       )}
-
       <Dialog open={!!editExpense} onClose={() => setEditExpense(null)}>
         <DialogTitle>Edit Expense</DialogTitle>
         <DialogContent>
           {editExpense && (
             <>
+            <TextField
+                label="Title"
+                type="string"
+                fullWidth
+                margin="normal"
+                value={editExpense.title}
+                onChange={(e) => setEditExpense({ ...editExpense, title: e.target.value })}
+              />
               <TextField
                 label="Amount"
                 type="number"
                 fullWidth
                 margin="normal"
                 value={editExpense.amount}
-                onChange={(e) => setEditExpense({ ...editExpense, amount: parseFloat(e.target.value) })}
+                onChange={(e) => setEditExpense({ ...editExpense, amount: parseInt(e.target.value) })}
               />
               <TextField
-  select
-  label="Category"
-  fullWidth
-  margin="normal"
-  value={editExpense.category}
-  onChange={(e) => setEditExpense({ ...editExpense, category: e.target.value })}
->
-  {categories.map((cat) => (
-    <MenuItem key={cat.name} value={cat.name}>
-      {`${cat.emoji} ${cat.name}`}
-    </MenuItem>
-  ))}
-</TextField>
-
+                select
+                label="Category"
+                fullWidth
+                margin="normal"
+                value={editExpense.category}
+                onChange={(e) => setEditExpense({ ...editExpense, category: e.target.value })}
+              >
+                {categories.slice(1).map((cat) => (
+                  <MenuItem key={cat.name} value={cat.name}>
+                    {`${cat.emoji} ${cat.name}`}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="PaymentMethod"
+                fullWidth
+                margin="normal"
+                value={editExpense.paymentMethod}
+                onChange={(e) => setEditExpense({ ...editExpense, paymentMethod: e.target.value })}
+              >
+                {paymentMethods.slice(1).map((method) => (
+                  <MenuItem key={method.name} value={method.name}>
+                    {`${method.emoji} ${method.name}`}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 label="Date"
                 type="date"

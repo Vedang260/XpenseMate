@@ -32,7 +32,11 @@ const categories = [
 ];
 
 // Payment Methods
-const paymentMethods = ["Cash", "Credit Card", "Debit Card", "UPI", "Net Banking"];
+const paymentMethods = [
+    { name: "Cash", emoji: "💵" },
+    { name: "Card", emoji: "💳" },
+    { name: "Online", emoji: "📱" },
+  ];
 
 const AddExpense: React.FC = () => {
   const [title, setTitle] = useState<string>("");  
@@ -130,8 +134,8 @@ const AddExpense: React.FC = () => {
           <InputLabel>Payment Method</InputLabel>
           <Select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
             {paymentMethods.map((method) => (
-              <MenuItem key={method} value={method}>
-                {method}
+              <MenuItem key={method.name} value={method.name}>
+                {`${method.emoji} ${method.name}`}
               </MenuItem>
             ))}
           </Select>
