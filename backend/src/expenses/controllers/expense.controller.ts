@@ -14,6 +14,14 @@ import { Roles } from "src/common/decorators/roles.decorator";
 export class ExpenseController{
     constructor(private readonly expenseService: ExpenseService) {}
 
+    // Get All Expenses of the user
+    @Get()
+    @UseGuards(RolesGuard)
+    @Roles(UserRole.USER)
+    async getAllExpenses(@Req() req: Request){
+        return this.expenseService.getAllExpenses(req['user'].userId);
+    }
+    
     // Create Expense
     @Post()
     @UseGuards(RolesGuard)
