@@ -34,7 +34,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto): Promise<{ success: boolean; message: string; access_token?: string | null}> {
+  async login(loginDto: LoginDto): Promise<{ success: boolean; message: string; token?: string | null, user: any}> {
     try{
       const { email, password } = loginDto;
 
@@ -50,17 +50,24 @@ export class AuthService {
         username: user.username, 
         role: user.role 
       };
-    
+      
       return {
         success: true,
         message: 'User is logged in successfully',
-        access_token: this.jwtService.sign(payload),
+        token: this.jwtService.sign(payload),
+        user:{
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        }
       };
     }catch(error){
       console.error('Error in Login: ', error.message);
       return{
         success: false,
-        message: error.message
+        message: error.message,
+        user: null
       }
     }
   }

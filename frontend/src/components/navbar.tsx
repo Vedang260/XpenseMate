@@ -22,9 +22,20 @@ const Navbar: React.FC = () => {
           XpenseMate
         </Typography>
         {token ? (
+          <>
+          <Button color="inherit" onClick={() => navigate("/dashboard")}>
+            Dashboard
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/add-expense")}>
+            Add Expense
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/expenses")}>
+            Expenses
+          </Button>
           <Button color="inherit" onClick={handleLogout}>
             Logout
           </Button>
+        </>
         ) : (
           <Button color="inherit" onClick={() => navigate("/login")}>
             Login

@@ -1,14 +1,13 @@
-export interface Expense {
-    id: number;
-    title: string;
+export interface BaseExpense {
     amount: number;
     date: string;
     category: string;
     description?: string;
     paymentMethod: string;
-}
-
-export interface ExpenseSate{
-    expenses: Expense[];
-    loading: boolean;
-}
+  }
+  
+  export interface Expense extends BaseExpense {
+    id: number;
+  }
+  
+  export type NewExpense = BaseExpense;

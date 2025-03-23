@@ -26,11 +26,17 @@ const Login: React.FC = () => {
     dispatch(setLoading(true));
     try {
       const response = await login({ email, password });
-      dispatch(setCredentials(response.data));
-      toastSuccess("Login successful!");
-      navigate("/dashboard");
+      const data: any = response.data;
+      console.log(data);
+      if(data?.success){
+        dispatch(setCredentials({token: data.token, user: data.user}));
+        toastSuccess(data.message);
+        navigate("/dashboard");
+      }else{
+        toastError(data.message);
+      }
     } catch (error) {
-      toastError("Login failed. Please try again.");
+      toastError("Failed to login");
     } finally {
       dispatch(setLoading(false));
     }
