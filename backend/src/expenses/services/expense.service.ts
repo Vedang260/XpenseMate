@@ -7,17 +7,27 @@ import { UpdateExpenseDto } from "../dtos/updateExpense.dto";
 export class ExpenseService{
     constructor (private readonly expenseRepository: ExpenseRepository){}
 
-    async createExpense(createExpenseDto: CreateExpenseDto, userId: number): Promise<{ success: boolean; message: string}>{
+    async createExpense(createExpenseDto: CreateExpenseDto, userId: number): Promise<{ success: boolean; message: string; expense: any}>{
         try{
-            await this.expenseRepository.createExpense(createExpenseDto, userId);
+            const expense = await this.expenseRepository.createExpense(createExpenseDto, userId);
             return{
                 success: true,
-                message: 'Expense is created successfully'
+                message: 'Expense is created successfully',
+                expense:{
+                    id: expense.id,
+                    title: expense.title,
+                    amount: expense.amount,
+                    date: expense.date,
+                    category: expense.category,
+                    description: expense.description,
+                    paymentMethod: expense.paymentMethod
+                }
             }
         }catch(error){
             return{
                 success: false,
-                message: error.message
+                message: error.message,
+                expense: null
             }
         }
     }
