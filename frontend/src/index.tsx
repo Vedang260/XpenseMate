@@ -5,6 +5,8 @@ import { store } from "./redux/store/store";
 import App from "./App";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Chart as ChartJS, ArcElement, BarElement, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+ChartJS.register(ArcElement, BarElement, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
