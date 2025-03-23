@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ bgcolor: "primary.main" }}>
+    <AppBar position="sticky" sx={{ bgcolor: "primary.main" }}>
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
           XpenseMate

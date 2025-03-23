@@ -158,6 +158,7 @@ const ExpenseList: React.FC = () => {
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Date</TableCell>
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Category</TableCell>
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Amount</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Description</TableCell>
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Payment Method</TableCell>
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
@@ -170,6 +171,7 @@ const ExpenseList: React.FC = () => {
                   <TableCell>{expense.date}</TableCell>
                   <TableCell>{categories.find(cat => cat.name === expense.category)?.emoji} {expense.category}</TableCell>
                   <TableCell>₹{expense.amount}</TableCell>
+                  <TableCell>{expense.description}</TableCell>
                   <TableCell>{paymentMethods.find(pm => pm.name === expense.paymentMethod)?.emoji} {expense.paymentMethod}</TableCell>
                   <TableCell>
                     <IconButton color="primary" onClick={() => setEditExpense(expense)}>
