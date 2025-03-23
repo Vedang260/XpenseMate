@@ -84,4 +84,43 @@ export class ExpenseService{
             }
         }
     }
+
+    async getExpenseAnalytics(userId: number): Promise<{ success: boolean; message: string; analytics: any}> {
+        try {
+          const today = moment().format('YYYY-MM-DD');
+          const startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
+          const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+          const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
+    
+          const dailyTotal = await this.expenseRepository.getTotalExpenseForPeriod(userId, today, today);
+          const weeklyTotal = await this.expenseRepository.getTotalExpenseForPeriod(userId, startOfWeek, today);
+          const monthlyTotal = await this.expenseRepository.getTotalExpenseForPeriod(userId, startOfMonth, today);
+          const yearlyTotal = await this.expenseRepository.getTotalExpenseForPeriod(userId, startOfYear, today);
+          
+          const categoryTotals = await this.expenseRepository.getCategoryWiseTotal(userId);
+          const weeklyExpenses = await this.expenseRepository.getWeeklyExpenses(userId);
+          const yearlyExpenses = await this.expenseRepository.getYearlyExpenses(userId);
+    
+          return {
+            success: true,
+            message: 'Your Analytics is here',
+            analytics: {
+              dailyTotal,
+              weeklyTotal,
+              monthlyTotal,
+              yearlyTotal,
+              categoryTotals,
+              weeklyExpenses,
+              yearlyExpenses,
+            },
+          };
+        } catch (error) {
+            console.error('Error in retreiving analytics: ', error.message);
+          return{
+            success: false,
+            message: 'Failed to retrieve anaytics',
+            analytics: null
+          }
+        }
+      }
 }
