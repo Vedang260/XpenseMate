@@ -45,4 +45,12 @@ export class ExpenseController{
     async deleteExpense(@Param('id') id: number){
         return this.expenseService.deleteExpense(id);
     }
+
+    // Get the analytics
+    @Get('analytics')
+    @UseGuards(RolesGuard)
+    @Roles(UserRole.USER)
+    async getAnalytics(@Req() req: Request) {
+        return this.expenseService.getExpenseAnalytics(req['user'].userId);
+    }
 }

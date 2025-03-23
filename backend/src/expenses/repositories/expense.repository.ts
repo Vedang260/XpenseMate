@@ -62,9 +62,9 @@ export class ExpenseRepository{
     async getTotalExpenseForPeriod(userId: number, startDate: string, endDate: string): Promise<number> {
         try{
             const result = await this.expenseRepository.createQueryBuilder('expenses')
-            .select('SUM(expense.amount)', 'total')
-            .where('expense.user_id = :userId', { userId })
-            .andWhere('expense.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+            .select('SUM(expenses.amount)', 'total')
+            .where('expenses.user_id = :userId', { userId })
+            .andWhere('expenses.date BETWEEN :startDate AND :endDate', { startDate, endDate })
             .getRawOne();
             
             return result?.total || 0;
@@ -77,10 +77,10 @@ export class ExpenseRepository{
       async getCategoryWiseTotal(userId: number): Promise<{ category: string; total: number }[]> {
         try{
             return this.expenseRepository.createQueryBuilder('expenses')
-            .select('expense.category', 'category')
-            .addSelect('SUM(expense.amount)', 'total')
-            .where('expense.user_id = :userId', { userId })
-            .groupBy('expense.category')
+            .select('expenses.category', 'category')
+            .addSelect('SUM(expenses.amount)', 'total')
+            .where('expenses.user_id = :userId', { userId })
+            .groupBy('expenses.category')
             .getRawMany();
         }catch(error){
             console.error('Error in retrieving total expense category-wise: ', error.message);
@@ -91,12 +91,12 @@ export class ExpenseRepository{
       async getWeeklyExpenses(userId: number): Promise<{ day: string; amount: number }[]> {
         try{
             return this.expenseRepository.createQueryBuilder('expenses')
-            .select(`TO_CHAR(expense.date, 'Dy') AS day`)
-            .addSelect('SUM(expense.amount)', 'amount')
-            .where('expense.user_id = :userId', { userId })
-            .andWhere('expense.date >= CURRENT_DATE - INTERVAL \'6 days\'')
+            .select(`TO_CHAR(expenses.date, 'Dy') AS day`)
+            .addSelect('SUM(expenses.amount)', 'amount')
+            .where('expenses.user_id = :userId', { userId })
+            .andWhere('expenses.date >= CURRENT_DATE - INTERVAL \'6 days\'')
             .groupBy('day')
-            .orderBy('MIN(expense.date)', 'ASC')
+            .orderBy('MIN(expenses.date)', 'ASC')
             .getRawMany();
         }catch(error){
             console.error('Error in retrieving total weekly-expenses: ', error.message);
@@ -107,12 +107,12 @@ export class ExpenseRepository{
       async getYearlyExpenses(userId: number): Promise<{ month: string; amount: number }[]> {
         try{
             return this.expenseRepository.createQueryBuilder('expenses')
-                .select(`TO_CHAR(expense.date, 'Mon') AS month`)
-                .addSelect('SUM(expense.amount)', 'amount')
-                .where('expense.user_id = :userId', { userId })
-                .andWhere('EXTRACT(YEAR FROM expense.date) = EXTRACT(YEAR FROM CURRENT_DATE)')
+                .select(`TO_CHAR(expenses.date, 'Mon') AS month`)
+                .addSelect('SUM(expenses.amount)', 'amount')
+                .where('expenses.user_id = :userId', { userId })
+                .andWhere('EXTRACT(YEAR FROM expenses.date) = EXTRACT(YEAR FROM CURRENT_DATE)')
                 .groupBy('month')
-                .orderBy('MIN(expense.date)', 'ASC')
+                .orderBy('MIN(expenses.date)', 'ASC')
                 .getRawMany();
         }catch(error){
             console.error('Error in retrieving yearly expenses: ', error.message);
