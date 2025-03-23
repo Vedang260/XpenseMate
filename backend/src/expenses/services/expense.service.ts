@@ -65,4 +65,22 @@ export class ExpenseService{
             }
         }
     }
+
+    async getAllExpenses(user_id: number): Promise<{ success: boolean; message: string; expenses: any}>{
+        try{
+            const expenses = await this.expenseRepository.getAllExpenses(user_id);
+            const sanitizedExpenses = expenses.map(({ user_id, ...rest }) => rest);
+            return{
+                success: true,
+                message: 'All Expenses are retrieved successfully',
+                expenses: sanitizedExpenses
+            }
+        }catch(error){
+            return{
+                success: false,
+                message: error.message,
+                expenses: null
+            }
+        }
+    }
 }
