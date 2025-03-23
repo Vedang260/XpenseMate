@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { ExpenseRepository } from "../repositories/expense.repository";
 import { CreateExpenseDto } from "../dtos/createExpense.dto";
 import { UpdateExpenseDto } from "../dtos/updateExpense.dto";
+import * as moment from 'moment';
 
 @Injectable()
 export class ExpenseService{
