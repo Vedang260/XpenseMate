@@ -38,4 +38,7 @@
 ✔ **JWT Authentication** (Secure user login using `passport-jwt`)  
 ✔ **Role-Based Access Control**:  
    - **User**: Can manage personal expenses  
-   - **Admin**: Can manage all expenses and users  
+   - **Admin**: Can manage all expenses and users
+
+### Postman API Documentation
+https://documenter.getpostman.com/view/26606017/2sAYkHodkQ
